@@ -1,0 +1,6 @@
+services:
+  companion-satellite:
+    build: .
+    volumes:
+      - /dev:/dev/hostdev:ro
+      - ${HOME}/companion-satellite/config:/config
