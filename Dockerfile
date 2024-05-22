@@ -1,4 +1,4 @@
-FROM node:16-bullseye
+FROM node:18-bullseye
 
 WORKDIR /app
 COPY . /app/
@@ -29,7 +29,7 @@ RUN mkdir node_modules/node-hid/libusb_config && touch node_modules/node-hid/lib
 RUN sed -i "36s/.*/'dependencies': [ 'libusb.gypi\:libusb', ]/g" node_modules/node-hid/binding.gyp
 RUN cd node_modules/node-hid && rm -R build && yarn gypconfigure && yarn gypbuild
 
-FROM node:16-bullseye-slim
+FROM node:18-bullseye-slim
 
 WORKDIR /app
 COPY --from=0 /app/	/app/
