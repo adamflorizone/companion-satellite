@@ -2,5 +2,16 @@ services:
   companion-satellite:
     build: .
     volumes:
+      # Mount the host for hotplug
       - /dev:/dev/hostdev:ro
-      - ${HOME}/companion-satellite/config:/config
+
+      # Set config from /config/companion-satellite.json or or env args below
+      # - ${HOME}/companion-satellite/config:/config
+    
+    environment:
+      # Set config from args
+      - COMPANION_REMOTEIP=companion.lan
+      - COMPANION_REMOTEPORT=16622
+      - COMPANION_RESTENABLED=true
+      - COMPANION_RESTPORT=9999
+      # - DOCKER_USER: root # docker rootless can run as root to access devs

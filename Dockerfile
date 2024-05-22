@@ -39,7 +39,25 @@ COPY entrypoint.sh ./
 # Use root. gosu changes user to node
 USER root 
 
+RUN mkdir "/config"
+
+# Hints for users
+EXPOSE 9999
+VOLUME [ "/config" ]
+
+ENV DOCKER_USER=node
+ENV COMPANION_REMOTEIP=127.0.0.1
+ENV COMPANION_REMOTEPORT=16622
+ENV COMPANION_RESTENABLED=true
+ENV COMPANION_RESTPORT=9999
+
+ARG COMPANION_PATH_CONFIG=/config/companion-satellite.json
+ENV COMPANION_PATH_CONFIG=${COMPANION_PATH_CONFIG}
+
+# ENV link
+RUN ln -s "/app/docker-env-companion-satellite.json" "${COMPANION_PATH_CONFIG}"
+
 # RUN sed -i "s/! -w \/sys/-w \/sys/" /etc/init.d/udev
 ENTRYPOINT ["/app/entrypoint.sh"]
-CMD [ "node", "/app/satellite/dist/main.js", "/config/companion-satellite.json" ]
+CMD [ "node", "/app/satellite/dist/main.js", "${COMPANION_PATH_CONFIG}" ]
 
