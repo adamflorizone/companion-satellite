@@ -28,9 +28,10 @@ RUN yarn workspaces foreach --all install # .gitignore: node_modules/usb/libusb.
 
 FROM node:18-bullseye-slim
 
+# udev: Loupedeck scan failed: Error: spawn udevadm ENOENT
 RUN --mount=type=cache,target=/var/cache/apt \
   apt update && apt install -y  \
-	libfontconfig libusb-1.0-0-dev gosu psmisc inotify-tools
+	libfontconfig libusb-1.0-0-dev gosu psmisc inotify-tools udev procps
 
 WORKDIR /app
 COPY --from=0 /app/	/app/
@@ -57,7 +58,7 @@ ENV COMPANION_PATH_CONFIG=${COMPANION_PATH_CONFIG}
 # ENV link
 RUN ln -s "/app/docker-env-companion-satellite.json" "${COMPANION_PATH_CONFIG}"
 
-# RUN sed -i "s/! -w \/sys/-w \/sys/" /etc/init.d/udev
+RUN sed -i "s/! -w \/sys/-w \/sys/" /etc/init.d/udev
 ENTRYPOINT ["/app/entrypoint.sh"]
 CMD [ "node", "/app/satellite/dist/main.js", "${COMPANION_PATH_CONFIG}" ]
 

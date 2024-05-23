@@ -1,11 +1,6 @@
 #!/bin/bash
 set -Eeuo pipefail
 
-# all config to be created!
-chown node:node /config 
-
-# service udev start
-# gosu "node" "$@"
 cat << EOF > "/app/docker-env-companion-satellite.json"
 {
     "remoteIp": "${COMPANION_REMOTEIP:-127.0.0.1}",
@@ -29,12 +24,15 @@ cat "${COMPANION_PATH_CONFIG}"
 
             if [[ "$filename" == hidraw* ]]; then
                 # This is a quick hack for non udev docker!
-                echo restarting node...
-                killall node
-            fi
+                echo restarting node... node /app/satellite/dist/main.js
+                pkill --full "node /app/satellite/dist/main.js"
+            fi 
         done
     done
 } &
 
+# allow config to be created
+chown "${DOCKER_USER:-node}:${DOCKER_USER:-node}" /config 
+
 # Run this is user
-gosu "${DOCKER_USER:-node}" bash -c "while true; do $*; done"
+gosu "${DOCKER_USER:-node}" bash -c "id; while true; do $*; sleep 0.1; done"
